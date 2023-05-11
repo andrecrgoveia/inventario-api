@@ -98,7 +98,32 @@ class ObjetoViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
 
+# View do objeto PermissaoPosse
+class PermissaoPosseViewSet(viewsets.ModelViewSet):
+    queryset = PermissaoPosse.objects.select_related('tipo_pessoa', 'tipo_objeto',).all()
+    serializer_class = PermissaoPosseSerializer
+
+    # Filtro para listar o objeto pelos campos do mesmo
+    def list(self, request):
+        try:
+            queryset = PermissaoPosse.objects.select_related('tipo_pessoa', 'tipo_objeto',).all()
+            keys = [
+                'tipo_pessoa',
+                'tipo_objeto',
+                'permissao',
+            ]
+            filters = {}
+            for key in keys:
+                filter = self.request.query_params.getlist(key)
+                if filter:
+                    filters['{}__in'.format(key)] = filter
+            queryset = queryset.filter(**filters)
+            serializer = PermissaoPosseSerializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # View do objeto PossePessoaObjeto

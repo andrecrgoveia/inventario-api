@@ -14,6 +14,7 @@ router.register('tipopessoas', views.TipoPessoaViewSet)
 router.register('pessoas', views.PessoaViewSet)
 router.register('tipoobjetos', views.TipoObjetoViewSet)
 router.register('objetos', views.ObjetoViewSet)
+router.register('permissaoposses', views.PermissaoPosseViewSet)
 router.register('possepessoaobjetos', views.PossePessoaObjetoViewSet)
 
 

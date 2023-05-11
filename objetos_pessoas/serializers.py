@@ -37,6 +37,16 @@ class ObjetoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# Serializando o modelo PermissaoPosse
+class PermissaoPosseSerializer(serializers.ModelSerializer):
+    nome_pessoa = serializers.CharField(source='id_pessoa.nome',read_only=True)
+    descricao_objeto = serializers.CharField(source='id_objeto.descricao',read_only=True)
+
+    class Meta:        
+        model = PermissaoPosse       
+        fields = '__all__'
+
+
 # Serializando o modelo PossePessoaObjeto
 class PossePessoaObjetoSerializer(serializers.ModelSerializer):
     numero_de_id_pessoa = serializers.CharField(source='id_pessoa.numero_de_id',read_only=True)

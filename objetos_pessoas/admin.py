@@ -15,5 +15,8 @@ admin.site.register(TipoObjeto)
 # Registrando o modelo Objeto
 admin.site.register(Objeto)
 
+# Registrando o modelo PermissaoPosse
+admin.site.register(PermissaoPosse)
+
 # Registrando o modelo PossePessoaObjeto
 admin.site.register(PossePessoaObjeto)

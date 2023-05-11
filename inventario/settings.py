@@ -91,6 +91,12 @@ DATABASES = {
     }
 }
 
+# Configuração de banco de dados de teste
+DATABASES['test'] = {
+    'ENGINE': env('DATABASE_ENGINE'),
+    'NAME': BASE_DIR / env('DATABASE_NAME_TESTE'),
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

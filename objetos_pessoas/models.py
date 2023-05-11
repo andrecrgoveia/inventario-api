@@ -41,12 +41,13 @@ class Pessoa(Base):
         verbose_name_plural = 'Pessoas'
 
     def __str__(self):
-        return str(self.numero_de_id)
+        return str(self.nome)
     
 
 # Nessa classe são criados os objetos que representam os tipos de objetos
 class TipoObjeto(Base):
     tipo = models.CharField('Tipo', max_length=255, blank=False, null=False)
+    multiplas_posses = models.BooleanField('Pode ter múltiplas posses?', default=True)
 
     class Meta:
         verbose_name = 'TipoObjeto'
@@ -69,7 +70,21 @@ class Objeto(Base):
         verbose_name_plural = 'Objetos'
 
     def __str__(self):
-        return str(self.numero_de_id)
+        return str(self.tipo_objeto)
+
+
+# Nessa classe são criados os objetos que representam as permissões de posse
+class PermissaoPosse(Base):
+    tipo_pessoa = models.ForeignKey(TipoPessoa, on_delete=models.CASCADE)
+    tipo_objeto = models.ForeignKey(TipoObjeto, on_delete=models.CASCADE)
+    permissao = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'PermissaoPosse'
+        verbose_name_plural = 'PermissoesPosse'
+
+    def __str__(self):
+        return f'{self.tipo_pessoa} pode possuir {self.tipo_objeto}: {self.permissao}'
 
 
 # Nessa classe são criados os objetos que representam os tipos de posse de objetos por pessoas
@@ -84,3 +99,17 @@ class PossePessoaObjeto(Base):
 
     def __str__(self):
         return str(self.numero_de_id)
+
+    def save(self, *args, **kwargs):
+        tipo_objeto = self.id_objeto.tipo_objeto
+        tipo_pessoa = self.id_pessoa.tipo_pessoa
+        permissao = PermissaoPosse.objects.filter(tipo_pessoa=tipo_pessoa, tipo_objeto=tipo_objeto).first()
+
+        if not permissao or not permissao.permissao:
+            raise Exception(f'{tipo_pessoa} não tem permissão para possuir {tipo_objeto}')
+
+        if not tipo_objeto.multiplas_posses:
+            objetos_iguais = PossePessoaObjeto.objects.filter(id_objeto=self.id_objeto)
+            if len(objetos_iguais) >= 2:
+                raise Exception('Este objeto já está em posse de duas pessoas')
+        super().save(*args, **kwargs)
